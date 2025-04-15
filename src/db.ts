@@ -6,4 +6,9 @@ const userSchema = new Schema ({
     firstname: {type: String , require: true , maxLength: 30},
     lastname: {type: String ,require: true , maxlength: 30}
 })
+const accountSchema = new Schema({
+    userId: {type: mongoose.Schema.Types.ObjectId, ref: "User" , require: true},
+    balance: {type: Number, require: true}
+})
 export const Usermodel = model ("User",userSchema);
+export const Accountmodel = model ("Account", accountSchema);
