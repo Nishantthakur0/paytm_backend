@@ -1,18 +1,18 @@
 import express from "express"
+
 import { Accountmodel, Usermodel } from "../db";
 import { JWT_PASSWORD } from "../config";
 import { Authmiddleware } from "../middleware";
 const jwt = require("jsonwebtoken")
 const zod = require("zod");
-const router = express.Router()
-
+const userRouter = express.Router()
 const signupSchema = zod.object({
     username: zod.string().email(),
     password: zod.string(),
     firstname: zod.string(),
     lastname: zod.string()
 })
-router.post('/signup', async (req,res)=>{
+userRouter.post('/signup', async (req,res)=>{
     const {success} = signupSchema.safeParse(req.body);
     if (!success) {
         res.json({
@@ -33,61 +33,26 @@ router.post('/signup', async (req,res)=>{
         firstname: req.body.firstname,
         lastname: req.body.lastname
     })
-    const userId = user._id
+   
 
     await Accountmodel.create({
-        userId,
+        userId: user._id,
         balance: 1 + Math.random()* 10000
 
     })
-    const token = jwt.sign({
-        userId
-    },JWT_PASSWORD);
-    res.json({
-        message: "User craeted",
-        token: token
-    })
-
-
 })
-const signinschema = zod .object({
+const signinschema = zod.object({
     username: zod.string().email(),
     password: zod.string()
 })
-router.post("signin", async (req,res) => {
-    const {sucess} = signinschema.safeParse(req.body);
-    if (!sucess) {
-        res.json({
-            message: "Email already exist"
-        })
-    }
-    const user = await Usermodel.findOne({
-        username: req.body.username,
-        password: req.body.password
-    })
-    if (user){
-        const token = jwt.sign({
-            userId: user._id
-        },JWT_PASSWORD);
 
-        res.json({
-            token: token
-        })    
-    }
-    res.json({
-        message: "Error while SignIn in!"
-    })
-    
-
-    
-})
 
 const updateuser = zod.object({
     password: zod.string().optional(),
     firstname: zod.string().optional(),
     lastname: zod.string().optional()
 })
-router.put("/",Authmiddleware,async (req,res) => {
+userRouter.put("/",Authmiddleware,async (req,res) => {
     const {success} = updateuser.safeParse(req.body);
     if (! success) {
         res.json({
@@ -111,7 +76,7 @@ router.put("/",Authmiddleware,async (req,res) => {
     }
     
 })
-router.get("/bulk",async (req,res) => {
+userRouter.get("/bulk",async (req,res) => {
     const filter = req.query.filter || "";
     const users = await Usermodel.find({
         $or: [{
@@ -136,4 +101,4 @@ router.get("/bulk",async (req,res) => {
     })
 })
 
-module.exports = router;
+export {userRouter};

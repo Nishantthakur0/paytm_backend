@@ -1,16 +1,18 @@
-import { Usermodel } from "./db";
+
 import express, { Request, Response } from "express";
+import mainrouter from "./routes/index";
+import cors from "cors";
 const app = express();
-const cors = require("cors");
+
 app.use(cors());
 app.use(express.json());
 
 const router = express.Router()
 
-const mainrouter = require("./routes/index")
 
 
-app.use("api/v1",mainrouter);
+
+app.use("/api/v1",mainrouter);
 module.exports = router;
 
 

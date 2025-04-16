@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Usermodel = void 0;
+exports.Accountmodel = exports.Usermodel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 mongoose_1.default.connect("mongodb://localhost:27017/paytm");
 const userSchema = new mongoose_1.Schema({
@@ -42,4 +42,9 @@ const userSchema = new mongoose_1.Schema({
     firstname: { type: String, require: true, maxLength: 30 },
     lastname: { type: String, require: true, maxlength: 30 }
 });
-exports.Usermodel = (0, mongoose_1.model)("user", userSchema);
+const accountSchema = new mongoose_1.Schema({
+    userId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User", require: true },
+    balance: { type: Number, require: true }
+});
+exports.Usermodel = (0, mongoose_1.model)("User", userSchema);
+exports.Accountmodel = (0, mongoose_1.model)("Account", accountSchema);
